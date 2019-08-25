@@ -39,7 +39,7 @@ namespace _02_commands_framework
 
                 // Tokens should be considered secret data and never hard-coded.
                 // We can read from the environment variable to avoid hardcoding.
-                await client.LoginAsync(TokenType.Bot, Environment.GetEnvironmentVariable("token"));
+                await client.LoginAsync(TokenType.Bot, Environment.GetEnvironmentVariable("discordtoken", EnvironmentVariableTarget.User));
                 await client.StartAsync();
 
                 // Here we initialize the logic required to register our commands.

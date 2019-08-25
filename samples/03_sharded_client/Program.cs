@@ -42,7 +42,7 @@ namespace _03_sharded_client
                 await services.GetRequiredService<CommandHandlingService>().InitializeAsync();
 
                 // Tokens should be considered secret data, and never hard-coded.
-                await client.LoginAsync(TokenType.Bot, Environment.GetEnvironmentVariable("token"));
+                await client.LoginAsync(TokenType.Bot, Environment.GetEnvironmentVariable("discordtoken", EnvironmentVariableTarget.User));
                 await client.StartAsync();
 
                 await Task.Delay(-1);

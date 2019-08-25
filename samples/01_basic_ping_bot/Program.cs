@@ -22,6 +22,7 @@ namespace _01_basic_ping_bot
         // an asynchronous context from the beginning.
         static void Main(string[] args)
         {
+            string token = Environment.GetEnvironmentVariable("discordtoken", EnvironmentVariableTarget.User);
             new Program().MainAsync().GetAwaiter().GetResult();
         }
 
@@ -39,7 +40,7 @@ namespace _01_basic_ping_bot
         public async Task MainAsync()
         {
             // Tokens should be considered secret data, and never hard-coded.
-            await _client.LoginAsync(TokenType.Bot, Environment.GetEnvironmentVariable("token"));
+            await _client.LoginAsync(TokenType.Bot, Environment.GetEnvironmentVariable("discordtoken", EnvironmentVariableTarget.User));
             await _client.StartAsync();
 
             // Block the program until it is closed.
