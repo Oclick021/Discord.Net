@@ -1,12 +1,26 @@
 ﻿using System;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace PubgStatsDiscordBot.Migrations
 {
-    public partial class player : Migration
+    public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Users",
+                columns: table => new
+                {
+                    ID = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    DiscordName = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Users", x => x.ID);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Stats",
                 columns: table => new
@@ -27,24 +41,19 @@ namespace PubgStatsDiscordBot.Migrations
                     WeeklyKills = table.Column<int>(nullable: false),
                     WeeklyWins = table.Column<int>(nullable: false),
                     Wins = table.Column<int>(nullable: false),
-                    Losses = table.Column<int>(nullable: false)
+                    Losses = table.Column<int>(nullable: false),
+                    Discriminator = table.Column<string>(nullable: false),
+                    MatchId = table.Column<string>(nullable: true),
+                    CreatedAt = table.Column<DateTime>(nullable: true),
+                    Duration = table.Column<long>(nullable: true),
+                    PlayerID = table.Column<string>(nullable: true),
+                    GameMode = table.Column<int>(nullable: true),
+                    MapName = table.Column<int>(nullable: true),
+                    IsCustomMatch = table.Column<bool>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Stats", x => x.ID);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Users",
-                columns: table => new
-                {
-                    ID = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    DiscordName = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Users", x => x.ID);
                 });
 
             migrationBuilder.CreateTable(
@@ -95,18 +104,43 @@ namespace PubgStatsDiscordBot.Migrations
                 name: "IX_Players_SquadStatsID",
                 table: "Players",
                 column: "SquadStatsID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Stats_PlayerID",
+                table: "Stats",
+                column: "PlayerID");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Stats_Players_PlayerID",
+                table: "Stats",
+                column: "PlayerID",
+                principalTable: "Players",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "Players");
+            migrationBuilder.DropForeignKey(
+                name: "FK_Players_Stats_DuoStatsID",
+                table: "Players");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Players_Stats_SoloStatsID",
+                table: "Players");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Players_Stats_SquadStatsID",
+                table: "Players");
 
             migrationBuilder.DropTable(
                 name: "Users");
 
             migrationBuilder.DropTable(
                 name: "Stats");
+
+            migrationBuilder.DropTable(
+                name: "Players");
         }
     }
 }

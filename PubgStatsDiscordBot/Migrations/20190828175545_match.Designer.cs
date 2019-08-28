@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PubgStatsDiscordBot.Helpers;
 
 namespace PubgStatsDiscordBot.Migrations
 {
     [DbContext(typeof(PubgDbContext))]
-    partial class PubgDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190828175545_match")]
+    partial class match
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -9,14 +9,14 @@ namespace PubgStatsDiscordBot.Helpers
 {
     public static class EmbedHelper
     {
-        public static Embed GetStats(string StatsType, SeasonStats stats,Color color)
+        public static Embed GetStats(string StatsType, Stats stats,Color color)
         {
             var embedBuilder = new EmbedBuilder();
             embedBuilder.Title = StatsType;
             embedBuilder.Color = color;
             embedBuilder.Url = "https://discord.gg/3FsMG3";
 
-            embedBuilder.AddField(new EmbedFieldBuilder() { Name = "Title", Value = SeasonStats.GetTitles(), IsInline = true });
+            embedBuilder.AddField(new EmbedFieldBuilder() { Name = "Title", Value = Stats.GetTitles(), IsInline = true });
             embedBuilder.AddField(new EmbedFieldBuilder() { Name = "Title", Value = stats.GetListValue(), IsInline = true });
 
             embedBuilder.WithFooter(new EmbedFooterBuilder() { Text = "با تشکر", IconUrl = "http://icons.iconarchive.com/icons/graphicloads/100-flat/256/home-icon.png" });
@@ -30,21 +30,21 @@ namespace PubgStatsDiscordBot.Helpers
             embedBuilder.Url = "https://discord.gg/3FsMG3";
 
             //Solos
-            embedBuilder.AddField(new EmbedFieldBuilder() { Name = "Solos", Value = SeasonStats.GetTitles(), IsInline = true });
+            embedBuilder.AddField(new EmbedFieldBuilder() { Name = "Solos", Value = Stats.GetTitles(), IsInline = true });
             foreach (var player in players)
             {
                 embedBuilder.AddField(new EmbedFieldBuilder() { Name = player.Name, Value = player.SoloStats.GetListValue(), IsInline = true });
             }
 
             //Dues
-            embedBuilder.AddField(new EmbedFieldBuilder() { Name = "Duos", Value = SeasonStats.GetTitles(), IsInline = true });
+            embedBuilder.AddField(new EmbedFieldBuilder() { Name = "Duos", Value = Stats.GetTitles(), IsInline = true });
             foreach (var player in players)
             {
                 embedBuilder.AddField(new EmbedFieldBuilder() { Name = player.Name, Value = player.DuoStats.GetListValue(), IsInline = true });
             }
 
             //Squad
-            embedBuilder.AddField(new EmbedFieldBuilder() { Name = "Squads", Value = SeasonStats.GetTitles(), IsInline = true });
+            embedBuilder.AddField(new EmbedFieldBuilder() { Name = "Squads", Value = Stats.GetTitles(), IsInline = true });
             foreach (var player in players)
             {
                 embedBuilder.AddField(new EmbedFieldBuilder() { Name = player.Name, Value = player.SquadStats.GetListValue(), IsInline = true });

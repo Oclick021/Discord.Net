@@ -22,18 +22,20 @@ namespace PubgStatsDiscordBot
         // an asynchronous context from the beginning.
         static void Main(string[] args)
         {
-            Credentials.DiscordToken = Environment.GetEnvironmentVariable("discordtoken", EnvironmentVariableTarget.User);
-            Credentials.PubgToken = Environment.GetEnvironmentVariable("pubgtoken", EnvironmentVariableTarget.User);
             PubgApiConfiguration.Configure(opt =>
             {
                 opt.ApiKey = Credentials.PubgToken;
             });
-            new Program().MainAsync().GetAwaiter().GetResult();
+            new Program()
+                .MainAsync()
+                .GetAwaiter()
+                .GetResult();
         }
+
+        
 
         public Program()
         {
-            ConfigDB();
 
             // It is recommended to Dispose of a client when you are finished
             // using it, at the end of your app's lifetime.
@@ -44,7 +46,7 @@ namespace PubgStatsDiscordBot
             _client.MessageReceived += MessageReceivedAsync;
         }
 
-
+       
         public async Task MainAsync()
         {
             // Tokens should be considered secret data, and never hard-coded.
@@ -106,17 +108,7 @@ namespace PubgStatsDiscordBot
         }
 
 
-        void ConfigDB()
-        {
-            //using (var dbContext = new PubgDbContext())
-            //{
-            //    dbContext.Database.EnsureCreated();
-            //    var player = new Player();
-            //    player.GetByName("prohumper");
-            //    dbContext.Players.Add(player);
-            //    dbContext.SaveChanges();
-            //}
-        }
+  
 
 
 

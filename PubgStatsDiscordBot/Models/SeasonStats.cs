@@ -10,7 +10,7 @@ using System.Text;
 namespace PubgStatsDiscordBot.Models
 {
 
-    public class SeasonStats : IStats
+    public class Stats : IStats
     {
         private static string currentSeasonID;
 

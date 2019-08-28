@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PubgStatsDiscordBot.Helpers;
@@ -9,14 +10,16 @@ using PubgStatsDiscordBot.Helpers;
 namespace PubgStatsDiscordBot.Migrations
 {
     [DbContext(typeof(PubgDbContext))]
-    [Migration("20190824101537_player")]
-    partial class player
+    [Migration("20190828155223_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079");
+                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
+                .HasAnnotation("Relational:MaxIdentifierLength", 128)
+                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("PubgStatsDiscordBot.Models.Player", b =>
                 {
@@ -44,7 +47,7 @@ namespace PubgStatsDiscordBot.Migrations
                     b.ToTable("Players");
                 });
 
-            modelBuilder.Entity("PubgStatsDiscordBot.Models.SeasonStats", b =>
+            modelBuilder.Entity("PubgStatsDiscordBot.Models.Stats", b =>
                 {
                     b.Property<string>("ID")
                         .ValueGeneratedOnAdd();
@@ -58,6 +61,9 @@ namespace PubgStatsDiscordBot.Migrations
                     b.Property<int>("DailyWins");
 
                     b.Property<float>("DamageDealt");
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired();
 
                     b.Property<int>("HeadshotKills");
 
@@ -84,12 +90,15 @@ namespace PubgStatsDiscordBot.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("Stats");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("Stats");
                 });
 
             modelBuilder.Entity("PubgStatsDiscordBot.Models.User", b =>
                 {
                     b.Property<int>("ID")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("DiscordName");
 
@@ -98,19 +107,49 @@ namespace PubgStatsDiscordBot.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("PubgStatsDiscordBot.Models.Match", b =>
+                {
+                    b.HasBaseType("PubgStatsDiscordBot.Models.Stats");
+
+                    b.Property<DateTime>("CreatedAt");
+
+                    b.Property<long>("Duration");
+
+                    b.Property<int>("GameMode");
+
+                    b.Property<bool>("IsCustomMatch");
+
+                    b.Property<int>("MapName");
+
+                    b.Property<string>("MatchId");
+
+                    b.Property<string>("PlayerID");
+
+                    b.HasIndex("PlayerID");
+
+                    b.HasDiscriminator().HasValue("Match");
+                });
+
             modelBuilder.Entity("PubgStatsDiscordBot.Models.Player", b =>
                 {
-                    b.HasOne("PubgStatsDiscordBot.Models.SeasonStats", "DuoStats")
+                    b.HasOne("PubgStatsDiscordBot.Models.Stats", "DuoStats")
                         .WithMany()
                         .HasForeignKey("DuoStatsID");
 
-                    b.HasOne("PubgStatsDiscordBot.Models.SeasonStats", "SoloStats")
+                    b.HasOne("PubgStatsDiscordBot.Models.Stats", "SoloStats")
                         .WithMany()
                         .HasForeignKey("SoloStatsID");
 
-                    b.HasOne("PubgStatsDiscordBot.Models.SeasonStats", "SquadStats")
+                    b.HasOne("PubgStatsDiscordBot.Models.Stats", "SquadStats")
                         .WithMany()
                         .HasForeignKey("SquadStatsID");
+                });
+
+            modelBuilder.Entity("PubgStatsDiscordBot.Models.Match", b =>
+                {
+                    b.HasOne("PubgStatsDiscordBot.Models.Player")
+                        .WithMany("Matches")
+                        .HasForeignKey("PlayerID");
                 });
 #pragma warning restore 612, 618
         }
