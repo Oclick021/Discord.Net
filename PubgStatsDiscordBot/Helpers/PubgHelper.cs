@@ -10,12 +10,17 @@ namespace PubgStatsDiscordBot.Helpers
 {
     public class PubgHelper
     {
-        public static PubgPlayerSeason GetPlayerStatsByName(string playerName)
+     
+
+        public static Player GetPlayerByName(string name)
         {
-            return null;
+            var playerFound = new PubgDbContext().Players.Where(p => p.Name == name).FirstOrDefault();
+            if (playerFound == null)
+            {
+                playerFound = new Player(name: name);
+            }
+            return playerFound;
         }
-
-
         public static Match GetPubgMatch(string matchID)
         {
             var service = new PubgMatchService();

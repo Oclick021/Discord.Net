@@ -4,6 +4,9 @@ namespace PubgStatsDiscordBot.Models
 {
     public class ParticipantsStats : IParticipantsStats
     {
+        public long Id { get; set; }
+        public string Name { get; set; }
+        public string PlayerId { get; set; }
         public int DBNOs { get; set; }
         public int Boosts { get; set; }
         public string DeathType { get; set; }
@@ -30,6 +33,17 @@ namespace PubgStatsDiscordBot.Models
         public int HeadshotKills { get; set; }
         public int Kills { get; set; }
         public float LongestKill { get; set; }
+ 
+
+        public string GetListValue()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public static string GetTitles()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 
 

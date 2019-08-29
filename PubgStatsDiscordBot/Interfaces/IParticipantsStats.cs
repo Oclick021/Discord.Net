@@ -6,7 +6,8 @@ namespace PubgStatsDiscordBot.Interfaces
 {
     public interface IParticipantsStats : IStats
     {
-
+        string Name { get; set; }
+        string PlayerId { get; set; }
         int DBNOs { get; set; }
         int Boosts { get; set; }
         string DeathType { get; set; }

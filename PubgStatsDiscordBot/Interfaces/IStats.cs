@@ -12,5 +12,7 @@ namespace PubgStatsDiscordBot.Interfaces
         int HeadshotKills { get; set; }
         int Kills { get; set; }
         float LongestKill { get; set; }
+
+        string GetListValue();
     }
 }

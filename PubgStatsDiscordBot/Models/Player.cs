@@ -13,10 +13,10 @@ namespace PubgStatsDiscordBot.Models
     {
         public string Id { get; set; }
         public string Name { get; set; }
-        public Stats SoloStats { get; set; }
-        public Stats DuoStats { get; set; }
-        public Stats SquadStats { get; set; }
-        public List<Match> Matches { get; set; }
+        public virtual SeasonStats SoloStats { get; set; }
+        public virtual SeasonStats DuoStats { get; set; }
+        public virtual SeasonStats SquadStats { get; set; }
+        public virtual ICollection<PlayerMatch> Matches { get; set; }
         public DateTime? CurrentSeasionLastUpdate { get; set; }
 
         PubgPlayerService playerService = new PubgPlayerService();
@@ -39,9 +39,7 @@ namespace PubgStatsDiscordBot.Models
         }
         public void GetByName(string playerName)
         {
-            try
-            {
-                Matches = new List<Match>();
+         
                 var playerFound = playerService.GetPlayers(PubgPlatform.Steam, new GetPubgPlayersRequest
                 {
                     ApiKey = Credentials.PubgToken,
@@ -50,11 +48,7 @@ namespace PubgStatsDiscordBot.Models
                 Id = playerFound.Id;
                 Name = playerName;
                 GetPlayerStats();
-            }
-            catch (Exception e)
-            {
-
-            }
+           
 
         }
         public void GetByID(string id)
@@ -68,22 +62,24 @@ namespace PubgStatsDiscordBot.Models
 
         void GetMatches(PubgPlayer player)
         {
-            Matches = new List<Match>();
+            var list = new List<PlayerMatch>();
             using (var con = new PubgDbContext())
             {
                 foreach (var matchId in player.MatchIds)
                 {
 
-                    var matchFound = con.Matches
-                                        .Where(m => m.Id == matchId)
-                                        .FirstOrDefault();
+                    var matchFound = con.Matches.Find(matchId);
                     if (matchFound == null)
                     {
                         matchFound = PubgHelper.GetPubgMatch(matchId);
-                        Matches.Add(matchFound);
                     }
-                   
+                    else
+                    {
+                        con.Matches.Attach(matchFound);
+                    }
+                    list.Add(new PlayerMatch() { Player = this, Match = matchFound});
                 }
+                Matches = list;
             }
         }
         public void GetPlayerStats()
@@ -91,12 +87,12 @@ namespace PubgStatsDiscordBot.Models
             if (CurrentSeasionLastUpdate == null || CurrentSeasionLastUpdate.Value <= DateTime.Now.AddMinutes(-10))
             {
 
-                var playerSeason = playerService.GetPlayerSeason(PubgPlatform.Steam, Id, Stats.CurrentSeasonID, Credentials.PubgToken);
-                SoloStats = new Stats();
+                var playerSeason = playerService.GetPlayerSeason(PubgPlatform.Steam, Id, SeasonStats.CurrentSeasonID, Credentials.PubgToken);
+                SoloStats = new SeasonStats();
                 SoloStats.Clone(playerSeason.GameModeStats.SoloFPP);
-                DuoStats = new Stats();
+                DuoStats = new SeasonStats();
                 DuoStats.Clone(playerSeason.GameModeStats.DuoFPP);
-                SquadStats = new Stats();
+                SquadStats = new SeasonStats();
                 SquadStats.Clone(playerSeason.GameModeStats.SquadFPP);
                 CurrentSeasionLastUpdate = DateTime.Now;
                 var playerFound = playerService.GetPlayer(PubgPlatform.Steam, Id, Credentials.PubgToken);

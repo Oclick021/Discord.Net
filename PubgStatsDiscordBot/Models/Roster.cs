@@ -9,7 +9,7 @@ namespace PubgStatsDiscordBot.Models
     {
         public string Id { get; set; }
         public bool Won { get; set; }
-        public Participant[] Participants { get; set; }
+        public virtual ICollection<Participant> Participants { get; set; }
         public string ShardId { get; set; }
     }
 }
